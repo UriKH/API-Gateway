@@ -1,12 +1,21 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	router := gin.Default()
 	router.Use()
+
+	router.GET("/user/data", func(c *gin.Context) {
+		authHeader := c.GetHeader("Authorization")
+		authToken := authHeader[len("Bearer "):]
+		c.String(http.StatusOK, "Hello %s", authToken)
+	})
+
 	router.GET("/users/me", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"data": gin.H{
