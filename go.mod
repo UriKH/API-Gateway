@@ -8,6 +8,7 @@ require (
 )
 
 require (
+	github.com/TekClinic/Auth-MicroService/auth_protobuf v0.0.0-20240212131444-c6cd1d175812 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20231106174013-bbf56f31fb17 // indirect
 )

@@ -8,7 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	auth_MS "github.com/TekClinic/Auth-MicroService/generated_files"
+	authpb "github.com/TekClinic/Auth-MicroService/auth_protobuf"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -32,13 +32,13 @@ func fetch_user_data(c *gin.Context) gin.HandlerFunc {
 		}
 
 		defer conn.Close()
-		client := auth_MS.NewAuthServiceClient(conn)
+		client := authpb.NewAuthServiceClient(conn)
 
-		client_response, err := client.ValidateToken(context.Background(), &auth_MS.TokenRequest{Token: auth_token})
+		client_response, err := client.ValidateToken(context.Background(), &authpb.TokenRequest{Token: auth_token})
 		if err != nil {
 			//return error
 		}
-		user_id := client_response.Id
+		user_id := client_response.UserId
 
 		//TODO: request user data using user_id from the user data fetcher microservice
 
