@@ -104,6 +104,7 @@ func fetchPatientData(authService *Service) gin.HandlerFunc {
 			} else {
 				ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 					"error": "unknown error occurred",
+					"details": err.Error(),
 				})
 			}
 			return
