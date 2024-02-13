@@ -12,7 +12,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	authpb "github.com/TekClinic/Auth-MicroService/auth_protobuf"
+	patientpb "github.com/TekClinic/Patients-MicroService/patients_protobuf"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -65,7 +65,7 @@ func extractBearerToken(header string) (string, error) {
 	return jwtToken[1], nil
 }
 
-func fetchPatientData(authService *Service) gin.HandlerFunc {
+func fetchPatientData(patientsService *Service) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		authToken, err := extractBearerToken(ctx.GetHeader("Authorization"))
 
@@ -84,7 +84,7 @@ func fetchPatientData(authService *Service) gin.HandlerFunc {
 		}
 
 		// Authenticate auth_token with auth-microservice
-		conn, err := grpc.Dial(authService.getAddr(),
+		conn, err := grpc.Dial(patientsService.getAddr(),
 			grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
@@ -93,39 +93,46 @@ func fetchPatientData(authService *Service) gin.HandlerFunc {
 			return
 		}
 		defer conn.Close()
-		client := authpb.NewAuthServiceClient(conn)
+		client := patientpb.NewPatientsServiceClient(conn)
 
-		clientResponse, err := client.ValidateToken(ctx, &authpb.TokenRequest{Token: authToken})
+		patient, err := client.GetMe(ctx, &patientpb.MeRequest{Token: authToken})
 		if err != nil {
 			if status.Code(err) == codes.Unauthenticated {
 				ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 					"error": "invalid authentication token",
 				})
+			} else if status.Code(err) == codes.PermissionDenied {
+				ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{
+					"error": "you are not allowed to do this",
+				})
+			} else if status.Code(err) == codes.NotFound {
+				ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+					"error": "data is missing",
+				})
 			} else {
 				ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-					"error": "unknown error occurred",
+					"error":   "unknown error occurred",
 					"details": err.Error(),
 				})
 			}
 			return
 		}
 
-		//TODO: request user data using user_id from the user data fetcher microservice
-
 		ctx.JSON(http.StatusOK, gin.H{
-			"user_id": clientResponse.UserId,
+			"user_id":  patient.GetUserId(),
+			"username": patient.GetName(),
 		})
 	}
 }
 
 func main() {
 	router := gin.Default()
-	authService, err := fetchServiceParameters("auth")
+	patientsService, err := fetchServiceParameters("patients")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	router.GET("/patients/me", fetchPatientData(authService))
+	router.GET("/patients/me", fetchPatientData(patientsService))
 
 	err = router.Run() // listen and serve on 0.0.0.0:8080
 	if err != nil {

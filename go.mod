@@ -3,18 +3,17 @@ module github.com/TekClinic/API-Gateway
 go 1.22.0
 
 require (
+	github.com/TekClinic/Patients-MicroService/patients_protobuf v0.0.0-20240213102719-0beabe302d87
 	github.com/gin-gonic/gin v1.9.1
 	google.golang.org/grpc v1.61.0
 )
 
 require (
-	github.com/TekClinic/Auth-MicroService/auth_protobuf v0.0.0-20240212131444-c6cd1d175812 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20231106174013-bbf56f31fb17 // indirect
 )
 
 require (
-	github.com/TekClinic/Auth-MicroService v0.0.0-20240212103956-c2767177632e
 	github.com/bytedance/sonic v1.10.2 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20230717121745-296ad89f973d // indirect
 	github.com/chenzhuoyu/iasm v0.9.1 // indirect
