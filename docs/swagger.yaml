@@ -67,7 +67,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_201'
+                $ref: '#/components/schemas/IdHolder'
   /patient/{id}:
     get:
       tags:
@@ -247,7 +247,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_201_1'
+                $ref: '#/components/schemas/IdHolder'
   /appointment/{id}:
     get:
       tags:
@@ -284,20 +284,22 @@ paths:
         style: simple
         explode: false
         schema:
-          type: integer
-          format: int32
+          $ref: '#/components/schemas/PatientIdHolder'
       requestBody:
+        description: patient that will be assigned to the appointment
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/id_patient_body'
+              $ref: '#/components/schemas/PatientIdHolder'
+            example:
+              patient_id: 12
       responses:
         "200":
           description: appointment associated with the id
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200'
+                $ref: '#/components/schemas/PatientIdHolder'
     delete:
       tags:
       - Appointment
@@ -319,7 +321,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_1'
+                $ref: '#/components/schemas/PatientIdHolder'
 components:
   schemas:
     NamedAPIResourceList:
@@ -593,7 +595,7 @@ components:
             type: boolean
             description: whether the assigned patient come to the appointment
             default: false
-    inline_response_201:
+    IdHolder:
       required:
       - id
       type: object
@@ -601,38 +603,8 @@ components:
         id:
           type: integer
           format: int32
-          example: 123
-    inline_response_201_1:
-      required:
-      - id
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int32
-          example: 245
-    id_patient_body:
-      required:
-      - patient_id
-      type: object
-      properties:
-        patient_id:
-          type: integer
-          description: patient that will be assigned to the appointment
-          format: int32
-          example: 154
-    inline_response_200:
-      required:
-      - patient_id
-      type: object
-      properties:
-        patient_id:
-          type: integer
-          description: previously assigned patient
-          format: int32
-          nullable: true
           example: 25
-    inline_response_200_1:
+    PatientIdHolder:
       required:
       - patient_id
       type: object
@@ -640,5 +612,4 @@ components:
         patient_id:
           type: integer
           format: int32
-          nullable: true
           example: 25
