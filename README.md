@@ -1,2 +1,4 @@
 # API-Gateway
-A prototype of the future API-Gateway. Currently just returns a hardcoded response for `GET /users/me` on `localhost:8080`.
+
+## Documentation
+Documentation may be accessed by the following link: [https://tekclinic.github.io/API-Gateway](https://tekclinic.github.io/API-Gateway)
