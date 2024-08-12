@@ -1,8 +1,9 @@
 package main
 
 import (
-	"log"
 	"time"
+
+	"go.uber.org/zap"
 
 	ms "github.com/TekClinic/MicroService-Lib"
 	"github.com/gin-contrib/location"
@@ -50,6 +51,6 @@ func main() {
 
 	err := router.Run() // listen and serve on 0.0.0.0:8080
 	if err != nil {
-		log.Fatal(err)
+		zap.L().Fatal("Failed to start server", zap.Error(err))
 	}
 }

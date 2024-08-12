@@ -1,8 +1,9 @@
 package routes
 
 import (
-	"log"
 	"net/http"
+
+	"go.uber.org/zap"
 
 	"github.com/TekClinic/API-Gateway/middlewares"
 	"github.com/TekClinic/API-Gateway/schemas"
@@ -272,11 +273,11 @@ func editAppointment(service appointments.AppointmentsServiceClient) gin.Handler
 func RegisterAppointmentRoutes(router *gin.Engine) {
 	appointmentService, err := ms.FetchServiceParameters(resourceNameAppointment)
 	if err != nil {
-		log.Fatal(err)
+		zap.L().Fatal("Failed to fetch service parameters", zap.Error(err))
 	}
-	conn, err := grpc.NewClient(appointmentService.GetAddr(), grpc.WithTransportCredentials(GetTransportCredentials()))
+	conn, err := grpc.NewClient(appointmentService.GetAddr(), ms.GetGRPCClientOptions()...)
 	if err != nil {
-		log.Fatal(err)
+		zap.L().Fatal("Failed to create gRPC client", zap.Error(err))
 	}
 	client := appointments.NewAppointmentsServiceClient(conn)
 

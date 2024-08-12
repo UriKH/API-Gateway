@@ -1,16 +1,10 @@
 package routes
 
 import (
-	"crypto/tls"
 	"fmt"
-	"log"
 	"net/http"
 	"net/url"
 	"strconv"
-
-	ms "github.com/TekClinic/MicroService-Lib"
-	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/gin-contrib/location"
 
@@ -128,18 +122,4 @@ func HandleGRPCError(err error, ctx *gin.Context) {
 			Message: fmt.Sprintf("unknown error occurred: %s", err.Error()),
 		})
 	}
-}
-
-// GetTransportCredentials returns gRPC transport credentials based on the SECURE_CONN environment variable.
-func GetTransportCredentials() credentials.TransportCredentials {
-	secure, err := strconv.ParseBool(ms.GetOptionalEnv("SECURE_CONN", "false"))
-	if err != nil {
-		log.Println("SECURE environment variable is not a boolean, defaulting to false")
-		secure = false
-	}
-
-	if secure {
-		return credentials.NewTLS(&tls.Config{InsecureSkipVerify: false, MinVersion: tls.VersionTLS12})
-	}
-	return insecure.NewCredentials()
 }

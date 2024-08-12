@@ -1,9 +1,10 @@
 package routes
 
 import (
-	"log"
 	"net/http"
 	"strings"
+
+	"go.uber.org/zap"
 
 	"github.com/TekClinic/API-Gateway/middlewares"
 	"github.com/TekClinic/API-Gateway/schemas"
@@ -166,11 +167,11 @@ func deleteDoctor(service doctors.DoctorsServiceClient) gin.HandlerFunc {
 func RegisterDoctorRoutes(router *gin.Engine) {
 	doctorsService, err := ms.FetchServiceParameters(resourceNameDoctor)
 	if err != nil {
-		log.Fatal(err)
+		zap.L().Fatal("Failed to fetch service parameters", zap.Error(err))
 	}
-	conn, err := grpc.NewClient(doctorsService.GetAddr(), grpc.WithTransportCredentials(GetTransportCredentials()))
+	conn, err := grpc.NewClient(doctorsService.GetAddr(), ms.GetGRPCClientOptions()...)
 	if err != nil {
-		log.Fatal(err)
+		zap.L().Fatal("Failed to create gRPC client", zap.Error(err))
 	}
 	client := doctors.NewDoctorsServiceClient(conn)
 	router.GET("/doctor", getDoctors(client))

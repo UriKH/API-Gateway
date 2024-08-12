@@ -1,9 +1,10 @@
 package routes
 
 import (
-	"log"
 	"net/http"
 	"strings"
+
+	"go.uber.org/zap"
 
 	sf "github.com/sa-/slicefunk"
 
@@ -198,11 +199,11 @@ func deletePatient(service patients.PatientsServiceClient) gin.HandlerFunc {
 func RegisterPatientRoutes(router *gin.Engine) {
 	patientsService, err := ms.FetchServiceParameters(resourceNamePatient)
 	if err != nil {
-		log.Fatal(err)
+		zap.L().Fatal("Failed to fetch service parameters", zap.Error(err))
 	}
-	conn, err := grpc.NewClient(patientsService.GetAddr(), grpc.WithTransportCredentials(GetTransportCredentials()))
+	conn, err := grpc.NewClient(patientsService.GetAddr(), ms.GetGRPCClientOptions()...)
 	if err != nil {
-		log.Fatal(err)
+		zap.L().Fatal("Failed to create gRPC client", zap.Error(err))
 	}
 	client := patients.NewPatientsServiceClient(conn)
 	router.GET("/patient", getPatients(client))
