@@ -145,9 +145,9 @@ func assignPatient(service appointments.AppointmentsServiceClient) gin.HandlerFu
 
 		// call appointment microservice
 		response, err := service.AssignPatient(ctx, &appointments.AssignPatientRequest{
-			Token:         ctx.GetString(middlewares.TokenKey),
-			AppointmentId: uriParams.ID,
-			PatientId:     bodyParams.PatientID,
+			Token:     ctx.GetString(middlewares.TokenKey),
+			Id:        uriParams.ID,
+			PatientId: bodyParams.PatientID,
 		})
 		if err != nil {
 			HandleGRPCError(err, ctx)
@@ -177,8 +177,8 @@ func removePatient(service appointments.AppointmentsServiceClient) gin.HandlerFu
 
 		// call appointment microservice
 		response, err := service.RemovePatient(ctx, &appointments.RemovePatientRequest{
-			Token:         ctx.GetString(middlewares.TokenKey),
-			AppointmentId: uriParams.ID,
+			Token: ctx.GetString(middlewares.TokenKey),
+			Id:    uriParams.ID,
 		})
 		if err != nil {
 			HandleGRPCError(err, ctx)
@@ -208,8 +208,8 @@ func deleteAppointment(service appointments.AppointmentsServiceClient) gin.Handl
 
 		// call appointment microservice
 		_, err = service.DeleteAppointment(ctx, &appointments.DeleteAppointmentRequest{
-			Token:         ctx.GetString(middlewares.TokenKey),
-			AppointmentId: uriParams.ID,
+			Token: ctx.GetString(middlewares.TokenKey),
+			Id:    uriParams.ID,
 		})
 		if err != nil {
 			HandleGRPCError(err, ctx)
@@ -220,13 +220,13 @@ func deleteAppointment(service appointments.AppointmentsServiceClient) gin.Handl
 	}
 }
 
-type EditAppointmentParams struct {
+type UpdateAppointmentParams struct {
 	ID int32 `uri:"id" binding:"required"`
 }
 
 func editAppointment(service appointments.AppointmentsServiceClient) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var uriParams EditAppointmentParams
+		var uriParams UpdateAppointmentParams
 		err := ctx.ShouldBindUri(&uriParams)
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, schemas.ErrorResponse{
@@ -245,9 +245,9 @@ func editAppointment(service appointments.AppointmentsServiceClient) gin.Handler
 		}
 
 		// call appointment microservice
-		response, err := service.EditAppointment(ctx, &appointments.EditAppointmentRequest{
+		response, err := service.UpdateAppointment(ctx, &appointments.UpdateAppointmentRequest{
 			Token:             ctx.GetString(middlewares.TokenKey),
-			AppointmentId:     uriParams.ID,
+			Id:                uriParams.ID,
 			PatientId:         bodyParams.PatientID,
 			DoctorId:          bodyParams.DoctorID,
 			StartTime:         bodyParams.StartTime,
@@ -261,7 +261,7 @@ func editAppointment(service appointments.AppointmentsServiceClient) gin.Handler
 		}
 
 		ctx.JSON(http.StatusOK, schemas.IDHolder{
-			ID: response.GetAppointmentId(),
+			ID: response.GetId(),
 		})
 	}
 }
