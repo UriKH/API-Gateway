@@ -3,6 +3,8 @@ package main
 import (
 	"time"
 
+	ginzap "github.com/gin-contrib/zap"
+
 	"go.uber.org/zap"
 
 	ms "github.com/TekClinic/MicroService-Lib"
@@ -24,10 +26,14 @@ const (
 )
 
 func main() {
+	if ms.IsProduction() {
+		gin.SetMode(gin.ReleaseMode)
+	}
+
 	router := gin.New()
 
 	// enable logging
-	router.Use(gin.Logger())
+	router.Use(ginzap.Ginzap(zap.L(), time.RFC3339, true))
 	// recover in case of panic
 	router.Use(gin.Recovery())
 	// setup CORS middleware

@@ -4,11 +4,12 @@ go 1.22.0
 
 require (
 	github.com/TekClinic/Appointments-MicroService/appointments_protobuf v0.1.4
-	github.com/TekClinic/Doctors-MicroService/doctors_protobuf v0.1.5
+	github.com/TekClinic/Doctors-MicroService/doctors_protobuf v0.1.6
 	github.com/TekClinic/MicroService-Lib v0.1.3
-	github.com/TekClinic/Patients-MicroService/patients_protobuf v0.1.5
+	github.com/TekClinic/Patients-MicroService/patients_protobuf v0.1.6
 	github.com/gin-contrib/cors v1.7.2
 	github.com/gin-contrib/location v1.0.1
+	github.com/gin-contrib/zap v1.1.3
 	github.com/gin-gonic/gin v1.10.0
 	github.com/sa-/slicefunk v0.1.4
 	go.uber.org/zap v1.27.0
