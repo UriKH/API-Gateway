@@ -224,7 +224,7 @@ type UpdateAppointmentParams struct {
 	ID int32 `uri:"id" binding:"required"`
 }
 
-func editAppointment(service appointments.AppointmentsServiceClient) gin.HandlerFunc {
+func updateAppointment(service appointments.AppointmentsServiceClient) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var uriParams UpdateAppointmentParams
 		err := ctx.ShouldBindUri(&uriParams)
@@ -235,7 +235,7 @@ func editAppointment(service appointments.AppointmentsServiceClient) gin.Handler
 			return
 		}
 
-		var bodyParams schemas.AppointmentEdit
+		var bodyParams schemas.AppointmentUpdate
 		err = ctx.ShouldBindJSON(&bodyParams)
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, schemas.ErrorResponse{
@@ -276,7 +276,7 @@ func RegisterAppointmentRoutes(router *gin.Engine) {
 	router.PUT("/appointment/:id/patient", assignPatient(client))
 	router.DELETE("/appointment/:id/patient", removePatient(client))
 	router.DELETE("/appointment/:id", deleteAppointment(client))
-	router.PUT("/appointment/:id", editAppointment(client))
+	router.PUT("/appointment/:id", updateAppointment(client))
 	// end deprecated
 
 	router.GET("/appointments/:id", getAppointment(client))
@@ -285,5 +285,5 @@ func RegisterAppointmentRoutes(router *gin.Engine) {
 	router.PUT("/appointments/:id/patient", assignPatient(client))
 	router.DELETE("/appointments/:id/patient", removePatient(client))
 	router.DELETE("/appointments/:id", deleteAppointment(client))
-	router.PUT("/appointments/:id", editAppointment(client))
+	router.PUT("/appointments/:id", updateAppointment(client))
 }

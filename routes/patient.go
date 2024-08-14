@@ -192,6 +192,68 @@ func deletePatient(service patients.PatientsServiceClient) gin.HandlerFunc {
 	}
 }
 
+type UpdatePatientParams struct {
+	ID int32 `uri:"id" binding:"required"`
+}
+
+func updatePatient(service patients.PatientsServiceClient) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		var uriParams UpdatePatientParams
+		err := ctx.ShouldBindUri(&uriParams)
+		if err != nil {
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, schemas.ErrorResponse{
+				Message: err.Error(),
+			})
+			return
+		}
+
+		var bodyParams schemas.PatientUpdate
+		err = ctx.ShouldBindJSON(&bodyParams)
+		if err != nil {
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, schemas.ErrorResponse{
+				Message: err.Error(),
+			})
+			return
+		}
+
+		// call patient microservice
+		response, err := service.UpdatePatient(ctx, &patients.UpdatePatientRequest{
+			Token: ctx.GetString(middlewares.TokenKey),
+			Patient: &patients.Patient{
+				Id:     uriParams.ID,
+				Active: bodyParams.Active,
+				Name:   bodyParams.Name,
+				PersonalId: &patients.Patient_PersonalID{
+					Id:   bodyParams.PersonalID.ID,
+					Type: bodyParams.PersonalID.Type,
+				},
+				Gender:      patients.Patient_Gender(patients.Patient_Gender_value[strings.ToUpper(bodyParams.Gender)]),
+				PhoneNumber: bodyParams.PhoneNumber,
+				Languages:   bodyParams.Languages,
+				BirthDate:   bodyParams.BirthDate,
+				EmergencyContacts: sf.Map(bodyParams.EmergencyContacts,
+					func(contact schemas.EmergencyContact) *patients.Patient_EmergencyContact {
+						return &patients.Patient_EmergencyContact{
+							Name:      contact.Name,
+							Closeness: contact.Closeness,
+							Phone:     contact.Phone,
+						}
+					}),
+				ReferredBy:  bodyParams.ReferredBy,
+				SpecialNote: bodyParams.SpecialNote,
+			},
+		})
+		if err != nil {
+			HandleGRPCError(err, ctx)
+			return
+		}
+
+		ctx.JSON(http.StatusOK, schemas.IDHolder{
+			ID: response.GetId(),
+		})
+	}
+}
+
 func RegisterPatientRoutes(router *gin.Engine) {
 	client := InitiateClient(resourceNamePatient, patients.NewPatientsServiceClient)
 
@@ -205,5 +267,6 @@ func RegisterPatientRoutes(router *gin.Engine) {
 	router.GET("/patients", getPatients(client))
 	router.POST("/patients", createPatient(client))
 	router.GET("/patients/:id", getPatient(client))
+	router.PUT("/patients/:id", updatePatient(client))
 	router.DELETE("/patients/:id", deletePatient(client))
 }

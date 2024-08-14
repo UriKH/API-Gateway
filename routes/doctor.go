@@ -160,6 +160,54 @@ func deleteDoctor(service doctors.DoctorsServiceClient) gin.HandlerFunc {
 	}
 }
 
+type UpdateDoctorParams struct {
+	ID int32 `uri:"id" binding:"required"`
+}
+
+func updateDoctor(service doctors.DoctorsServiceClient) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		var uriParams UpdateDoctorParams
+		err := ctx.ShouldBindUri(&uriParams)
+		if err != nil {
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, schemas.ErrorResponse{
+				Message: err.Error(),
+			})
+			return
+		}
+
+		var bodyParams schemas.DoctorUpdate
+		err = ctx.ShouldBindJSON(&bodyParams)
+		if err != nil {
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, schemas.ErrorResponse{
+				Message: err.Error(),
+			})
+			return
+		}
+
+		// call doctor microservice
+		response, err := service.UpdateDoctor(ctx, &doctors.UpdateDoctorRequest{
+			Token: ctx.GetString(middlewares.TokenKey),
+			Doctor: &doctors.Doctor{
+				Id:           uriParams.ID,
+				Active:       bodyParams.Active,
+				Name:         bodyParams.Name,
+				Gender:       doctors.Doctor_Gender(doctors.Doctor_Gender_value[strings.ToUpper(bodyParams.Gender)]),
+				PhoneNumber:  bodyParams.PhoneNumber,
+				Specialities: bodyParams.Specialities,
+				SpecialNote:  bodyParams.SpecialNote,
+			},
+		})
+		if err != nil {
+			HandleGRPCError(err, ctx)
+			return
+		}
+
+		ctx.JSON(http.StatusOK, schemas.IDHolder{
+			ID: response.GetId(),
+		})
+	}
+}
+
 func RegisterDoctorRoutes(router *gin.Engine) {
 	client := InitiateClient(resourceNameDoctor, doctors.NewDoctorsServiceClient)
 
@@ -173,5 +221,6 @@ func RegisterDoctorRoutes(router *gin.Engine) {
 	router.GET("/doctors", getDoctors(client))
 	router.POST("/doctors", createDoctor(client))
 	router.GET("/doctors/:id", getDoctor(client))
+	router.PUT("/doctors/:id", updateDoctor(client))
 	router.DELETE("/doctors/:id", deleteDoctor(client))
 }

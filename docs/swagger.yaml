@@ -102,6 +102,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Patient'
+    put:
+      tags:
+        - Patient
+      description: updates a specific patient
+      operationId: updatePatient
+      parameters:
+        - name: id
+          in: path
+          description: id of the patient to be updated
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatientUpdate'
+      responses:
+        "200":
+          description: id of the updated patient
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdHolder'
     delete:
       tags:
         - Patient
@@ -213,6 +240,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Doctor'
+    put:
+      tags:
+        - Doctors
+      description: updates a specific doctor
+      operationId: updateDoctor
+      parameters:
+        - name: id
+          in: path
+          description: id of the doctor to be updated
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DoctorUpdate'
+      responses:
+        "200":
+          description: id of the updated doctor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdHolder'
     delete:
       tags:
         - Doctor
@@ -365,7 +419,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AppointmentEdit'
+              $ref: '#/components/schemas/AppointmentUpdate'
       responses:
         "200":
           description: id of the updated appointment
@@ -579,6 +633,28 @@ components:
             format: int32
             example: 23
       - $ref: '#/components/schemas/PatientBase'
+    PatientUpdate:
+      allOf:
+        - $ref: '#/components/schemas/PatientBase'
+        - required:
+            - active
+            - age
+            - name
+            - personal_id
+            - gender
+            - phone_number
+            - languages
+            - birth_date
+            - emergency_contacts
+            - referred_by
+            - special_note
+          type: object
+          properties:
+            active:
+              type: boolean
+              description: whether the patient still visits the clinic.
+              example: true
+              default: true
     PersonalId:
       required:
       - id
@@ -683,6 +759,23 @@ components:
               example: true
               default: true
         - $ref: '#/components/schemas/DoctorBase'
+    DoctorUpdate:
+      allOf:
+        - $ref: '#/components/schemas/DoctorBase'
+        - required:
+            - active
+            - name
+            - gender
+            - phone_number
+            - specialities
+            - special_note
+          type: object
+          properties:
+            active:
+              type: boolean
+              description: whether the doctor still works in the clinic.
+              example: true
+              default: true
     AppointmentBase:
       required:
       - doctor_id
@@ -736,7 +829,7 @@ components:
             type: boolean
             description: whether the assigned patient come to the appointment
             default: false
-    AppointmentEdit:
+    AppointmentUpdate:
       allOf:
       - $ref: '#/components/schemas/AppointmentBase'
       - required:

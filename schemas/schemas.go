@@ -36,6 +36,12 @@ type Patient struct {
 	Age    int32 `json:"age"`
 }
 
+// PatientUpdate implements PatientUpdate schema.
+type PatientUpdate struct {
+	PatientBase
+	Active bool `json:"active"`
+}
+
 // PersonalID implements PersonalID schema.
 type PersonalID struct {
 	ID   string `json:"id" binding:"required,min=1,max=100"`
@@ -64,6 +70,12 @@ type Doctor struct {
 	Active bool  `json:"active"`
 }
 
+// DoctorUpdate implements DoctorUpdate schema.
+type DoctorUpdate struct {
+	DoctorBase
+	Active bool `json:"active"`
+}
+
 // AppointmentBase implements AppointmentBase schema.
 type AppointmentBase struct {
 	PatientID int32  `json:"patient_id,omitempty"`
@@ -80,8 +92,8 @@ type Appointment struct {
 	Visited           bool  `json:"visited"`
 }
 
-// AppointmentEdit implements Appointment schema.
-type AppointmentEdit struct {
+// AppointmentUpdate implements Appointment schema.
+type AppointmentUpdate struct {
 	AppointmentBase
 	ApprovedByPatient bool `json:"approved_by_patient"`
 	Visited           bool `json:"visited"`
