@@ -113,3 +113,22 @@ type PatientIDHolder struct {
 type ErrorResponse struct {
 	Message string `json:"message"`
 }
+
+type TaskBaseScheme struct {
+	patient_id  int32
+	expertise   string
+	title       string
+	description string
+}
+
+type TaskScheme struct {
+	TaskBaseScheme
+	id         int32
+	created_at string
+	complete   bool
+}
+
+type TaskUpdateScheme struct {
+	TaskBaseScheme
+	// TODO:
+}
