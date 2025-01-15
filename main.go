@@ -54,6 +54,7 @@ func main() {
 	routes.RegisterPatientRoutes(router)
 	routes.RegisterDoctorRoutes(router)
 	routes.RegisterAppointmentRoutes(router)
+	routes.RegisterTasksRoutes(router)
 
 	err := router.Run() // listen and serve on 0.0.0.0:8080
 	if err != nil {
