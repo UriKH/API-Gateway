@@ -7,6 +7,7 @@ require (
 	github.com/TekClinic/Doctors-MicroService/doctors_protobuf v0.1.6
 	github.com/TekClinic/MicroService-Lib v0.1.3
 	github.com/TekClinic/Patients-MicroService/patients_protobuf v0.1.6
+	github.com/TekClinic/Tasks-MicroService/tasks_protobuf v0.1.6
 	github.com/gin-contrib/cors v1.7.2
 	github.com/gin-contrib/location v1.0.1
 	github.com/gin-contrib/zap v1.1.3

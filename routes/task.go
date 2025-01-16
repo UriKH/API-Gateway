@@ -183,12 +183,15 @@ func updateTask(service tasks.TasksServiceClient) gin.HandlerFunc {
 			Token: ctx.GetString(middlewares.TokenKey),
 			Task: &tasks.Task{
 				Id:     uriParams.ID,
-				Complete: bodyParams.Complete,
+                // TODO: We need to get this from the request...
+				// Complete: bodyParams.Complete,
+                Complete: false,
                 Title:  bodyParams.Title,
                 Description: bodyParams.Description,
                 Expertise: bodyParams.Expertise,
                 PatientId: bodyParams.PatientId,
-                CreatedAt: bodyParams.CreatedAt,
+                // TODO: remove this!
+                CreatedAt: "2020-02-20",
 			},
 		})
 		if err != nil {
