@@ -114,21 +114,21 @@ type ErrorResponse struct {
 	Message string `json:"message"`
 }
 
-type TaskBaseScheme struct {
-	patient_id  int32
-	expertise   string
-	title       string
-	description string
+type TaskBase struct {
+	PatientId   int32
+	Expertise   string
+	Title       string
+	Description string
 }
 
-type TaskScheme struct {
-	TaskBaseScheme
-	id         int32
-	created_at string
-	complete   bool
+type Task struct {
+	TaskBase
+	Id         int32
+	CreatedAt  string
+	Complete   bool
 }
 
-type TaskUpdateScheme struct {
-	TaskBaseScheme
+type TaskUpdate struct {
+	TaskBase
 	// TODO:
 }
