@@ -2,9 +2,6 @@ package routes
 
 import (
 	"net/http"
-	"strings"
-
-	sf "github.com/sa-/slicefunk"
 
 	"github.com/TekClinic/API-Gateway/middlewares"
 	"github.com/TekClinic/API-Gateway/schemas"
