@@ -208,15 +208,6 @@ func updateTask(service tasks.TasksServiceClient) gin.HandlerFunc {
 func RegisterTaskRoutes(router *gin.Engine) {
 	client := InitiateClient(resourceNameTask, tasks.NewTasksServiceClient)
 
-    /*
-	// deprecated
-	router.GET("/task", getTasks(client))
-	router.POST("/task", createTask(client))
-	router.GET("/task/:id", getTask(client))
-	router.DELETE("/task/:id", deleteTask(client))
-	// end deprecated
-    */
-
 	router.GET("/tasks", getTasks(client))
 	router.POST("/tasks", createTask(client))
 	router.GET("/tasks/:id", getTask(client))
