@@ -84,15 +84,15 @@ func getTask(service tasks.TasksServiceClient) gin.HandlerFunc {
 
 		ctx.JSON(http.StatusOK,
 			schemas.Task{
-                TaskBase: schemas.TaskBase{
-                    PatientId: task.GetPatientId(),
-                    Expertise: task.GetExpertise(),
-                    Title: task.GetTitle(),
-                    Description: task.GetDescription(),
-                },
-                Id: task.GetId(),
-                CreatedAt: task.GetCreatedAt(),
-                Complete: task.GetComplete(),
+				TaskBase: schemas.TaskBase{
+					PatientId:   task.GetPatientId(),
+					Expertise:   task.GetExpertise(),
+					Title:       task.GetTitle(),
+					Description: task.GetDescription(),
+				},
+				Id:        task.GetId(),
+				CreatedAt: task.GetCreatedAt(),
+				Complete:  task.GetComplete(),
 			})
 	}
 }
@@ -111,12 +111,12 @@ func createTask(service tasks.TasksServiceClient) gin.HandlerFunc {
 
 		// call task microservice
 		response, err := service.CreateTask(ctx, &tasks.CreateTaskRequest{
-            Token: ctx.GetString(middlewares.TokenKey),
-            Title: bodyParams.Title,
-            Description: bodyParams.Description,
-            Expertise: bodyParams.Expertise,
-            PatientId: bodyParams.PatientId,
-        })
+			Token:       ctx.GetString(middlewares.TokenKey),
+			Title:       bodyParams.Title,
+			Description: bodyParams.Description,
+			Expertise:   bodyParams.Expertise,
+			PatientId:   bodyParams.PatientId,
+		})
 		if err != nil {
 			HandleGRPCError(err, ctx)
 			return
@@ -150,7 +150,7 @@ func deleteTask(service tasks.TasksServiceClient) gin.HandlerFunc {
 			return
 		}
 
-		ctx.Status(http.StatusOK)
+		ctx.JSON(http.StatusOK, gin.H{})
 	}
 }
 
@@ -182,16 +182,16 @@ func updateTask(service tasks.TasksServiceClient) gin.HandlerFunc {
 		response, err := service.UpdateTask(ctx, &tasks.UpdateTaskRequest{
 			Token: ctx.GetString(middlewares.TokenKey),
 			Task: &tasks.Task{
-				Id:     uriParams.ID,
-                // TODO: We need to get this from the request...
+				Id: uriParams.ID,
+				// TODO: We need to get this from the request...
 				// Complete: bodyParams.Complete,
-                Complete: false,
-                Title:  bodyParams.Title,
-                Description: bodyParams.Description,
-                Expertise: bodyParams.Expertise,
-                PatientId: bodyParams.PatientId,
-                // TODO: remove this!
-                CreatedAt: "2020-02-20",
+				Complete:    bodyParams.Complete,
+				Title:       bodyParams.Title,
+				Description: bodyParams.Description,
+				Expertise:   bodyParams.Expertise,
+				PatientId:   bodyParams.PatientID,
+				// TODO: remove this!
+				//CreatedAt: "2020-02-20",
 			},
 		})
 		if err != nil {

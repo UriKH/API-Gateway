@@ -116,20 +116,23 @@ type ErrorResponse struct {
 
 // TODO: I do not know how to use these attributes, I am just guessing
 type TaskBase struct {
-  PatientId   int32 `json:"patient_id" binding:"required"`
-  Expertise   string `json:"expertise"`
-  Title       string `json:"title" binding:"required"`
-  Description string `json:"description"`
+	PatientId   int32  `json:"patient_id" binding:"required"`
+	Expertise   string `json:"expertise"`
+	Title       string `json:"title" binding:"required"`
+	Description string `json:"description"`
 }
 
 type Task struct {
 	TaskBase
-  Id         int32 `json:"id" binding:"required"`
-  CreatedAt  string `json:"created_at" binding:"required"`
-  Complete   bool `json:"complete" binding:"required"`
+	Id        int32  `json:"id" binding:"required"`
+	CreatedAt string `json:"created_at" binding:"required"`
+	Complete  bool   `json:"complete" binding:"required"`
 }
 
 type TaskUpdate struct {
-	TaskBase
-	// TODO:
+	PatientID   int32  `json:"patient_id" binding:"required"` // Copied from TaskBase
+	Expertise   string `json:"expertise"`                     // Copied from TaskBase
+	Title       string `json:"title" binding:"required"`      // Copied from TaskBase
+	Description string `json:"description"`                   // Copied from TaskBase
+	Complete    bool   `json:"complete"`
 }
