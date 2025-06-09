@@ -2,6 +2,7 @@ package routes
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/TekClinic/API-Gateway/middlewares"
 	"github.com/TekClinic/API-Gateway/schemas"
@@ -205,6 +206,37 @@ func updateTask(service tasks.TasksServiceClient) gin.HandlerFunc {
 	}
 }
 
+func getTasksByPatient(service tasks.TasksServiceClient) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		patientIDStr := ctx.Query("patient_id")
+		if patientIDStr == "" {
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, schemas.ErrorResponse{
+				Message: "patient_id is required",
+			})
+			return
+		}
+		patientID, err := strconv.Atoi(patientIDStr)
+		if err != nil {
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, schemas.ErrorResponse{
+				Message: "invalid patient_id",
+			})
+			return
+		}
+
+		response, err := service.GetTasksByPatient(ctx, &tasks.GetTasksByPatientRequest{
+			Token:     ctx.GetString(middlewares.TokenKey),
+			PatientId: int32(patientID),
+		})
+		if err != nil {
+			HandleGRPCError(err, ctx)
+			return
+		}
+
+		// Convert gRPC tasks to your API schema if needed
+		ctx.JSON(http.StatusOK, response.Tasks)
+	}
+}
+
 func RegisterTaskRoutes(router *gin.Engine) {
 	client := InitiateClient(resourceNameTask, tasks.NewTasksServiceClient)
 
@@ -213,4 +245,5 @@ func RegisterTaskRoutes(router *gin.Engine) {
 	router.GET("/tasks/:id", getTask(client))
 	router.PUT("/tasks/:id", updateTask(client))
 	router.DELETE("/tasks/:id", deleteTask(client))
+	router.GET("/tasks/by-patient", getTasksByPatient(client))
 }
